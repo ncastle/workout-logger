@@ -1,26 +1,59 @@
-html,
+/* Default Styles */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom Styles for index */
+
 body {
-  padding: 0;
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  background-color: rgb(211, 222, 255);
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+button {
+  background-color: white;
+  border: 1px solid grey;
+  padding: 1px 6px;
 }
 
-* {
-  box-sizing: border-box;
+button#submit {
+  margin-bottom: 1rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
-  body {
-    color: white;
-    background: black;
-  }
+#app {
+  padding: 2rem;
+  width: 100%;
+  height: 100vh;
+}
+
+h1 {
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+input {
+  /* height: 2.5rem; */
+  margin-bottom: 0.5rem;
+  border: initial;
+  padding: 1px 6px;
+}
+
+li {
+  background-color: lightgrey;
+  font-size: 1.5rem;
+  width: 100%;
+  padding: 0.5rem;
+  list-style-type: none;
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.25rem;
+}
+
+li :first-child {
+  margin-right: auto;
 }

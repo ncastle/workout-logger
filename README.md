@@ -1,34 +1,49 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# workout-app
 
-## Getting Started
+## Description
+An app to create and track workouts and progress made in the gym
 
-First, run the development server:
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+## Stack
+Mern Stack
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+## Configuration
+- The webpack & babel configuration for this project is based off of [this article](https://levelup.gitconnected.com/freedom-from-create-react-app-how-to-create-react-apps-without-cra-27fadeb79c82)
+- I will be looking into the difference between development and production webpack configuration suggestions based on the [webpack docs](https://webpack.js.org/guides/production/)
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+## Future Features:
+- Can generate workouts based on criteria:
+  - Certain exercises/types (Ex: Pull, Push, Legs, Upper, Lower, Core, Arms, Shoulders, etc.)
+  - How many days you want
+- Create a custom workout selecting from exercise list or creating your own
+- Admin to see created workouts among all users?
+- Create a workout and post to database and allow for other users to search workouts?
+- Profile?
+- UI to easily see progress in certain areas based on selected filters
+- remove placeholders and use floating labels?
+  - can do this with all CSS or just use something like MUI, which has it built in with inputs
 
-## Learn More
 
-To learn more about Next.js, take a look at the following resources:
+## MVP:
+- Will be a ToDo list type of application
+  - Enter in your exercises into a field
+  - Will populate an 'ExerciseCard' (name pending) component and display to screen
+  - Can edit, or delete a card
+- Connect to MongoDB and store data
+- Mobile-first
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## Log:
 
-## Deploy on Vercel
+### 10/4/22:
+- added to readme
+- learned more about manual webpack setup through doc guides
+  - source maps & asset and output management
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 10/7/22
+- created basic add and delete funcitonality for logging an exercise
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## 10/9/22
+- created edit funcitonality on a logged exercise
