@@ -1,27 +1,16 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import type { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiResponse } from 'next';
 import { User } from '@prisma/client';
-import { ApiError } from 'next/dist/server/api-utils';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import type { ApiError } from 'next/dist/server/api-utils';
 import { createUser, getUsers } from '../../prisma/scripts';
 import { UserData } from '../../components/Test';
+import { MyNextApiRequest, ResponseData } from '../../utils/types';
 
-export type ResponseData = {
-  result: string;
-  error?: ApiError | unknown;
-  users?: User[];
-};
-
-interface MyNextApiRequest extends NextApiRequest {
-  body: string;
-}
-
-async function handlePostRequest(req: MyNextApiRequest): Promise<void> {
-  console.log(req);
-  console.log(typeof req.body);
+async function handlePostRequest(req: MyNextApiRequest): Promise<User> {
   const userData = JSON.parse(req.body) as UserData;
-  console.log('run createUser');
   return createUser(userData).catch(async (e) => {
-    console.error(e);
+    throw e;
   });
 }
 
@@ -39,14 +28,16 @@ export default async function handler(
   try {
     switch (method?.toLowerCase()) {
       case 'post': {
-        await handlePostRequest(req);
-        return res.status(200).json({ result: 'Successfuly created user' });
+        const user = await handlePostRequest(req);
+        return res
+          .status(200)
+          .json({ result: 'Successfuly created user', data: user });
       }
       case 'get': {
         const users = await handleGetRequest();
         return res.status(200).json({
           result: 'Successfully retrieved users',
-          users,
+          data: users,
         });
       }
       default:
@@ -56,6 +47,7 @@ export default async function handler(
     console.log(error);
     return res.status(500).json({
       result: 'Something went wrong during request, see error for more details',
+      data: null,
       error,
     });
   }

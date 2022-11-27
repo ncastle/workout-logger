@@ -9,13 +9,7 @@ body {
   background-color: rgb(211, 222, 255);
 }
 
-button {
-  background-color: white;
-  border: 1px solid grey;
-  padding: 1px 6px;
-}
-
-button#submit {
+button.submit {
   margin-bottom: 1rem;
 }
 

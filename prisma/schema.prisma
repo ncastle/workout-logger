@@ -11,18 +11,19 @@ datasource db {
 }
 
 model User {
-  id        Int        @id @default(autoincrement())
+  id        String     @id @default(uuid())
   email     String     @unique
   name      String?
   exercises Exercise[]
 }
 
 model Exercise {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(uuid())
   exercise  String
   weight    Int
   reps      Int
   user      User     @relation(fields: [userId], references: [id])
-  userId    Int
-  createdAt DateTime
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
