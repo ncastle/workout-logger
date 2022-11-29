@@ -56,6 +56,9 @@ export async function getExercises(email: string): Promise<ExerciseItem[]> {
       reps: true,
       weight: true,
     },
+    orderBy: {
+      createdAt: 'desc',
+    },
   });
 }
 
