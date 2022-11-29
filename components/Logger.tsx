@@ -1,4 +1,5 @@
 import { ChangeEventHandler, useEffect, useState } from 'react';
+import { v4 as uuid } from 'uuid';
 import { ExerciseItem, ResponseData } from '../utils/types';
 
 function LoggerPage() {
@@ -40,7 +41,9 @@ function LoggerPage() {
 
   const handleSubmit = async () => {
     if (!exercise || !weight || !reps) return;
-    const item = {
+    const item: ExerciseItem = {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+      id: uuid(),
       exercise,
       weight: +weight,
       reps: +reps,
@@ -56,13 +59,10 @@ function LoggerPage() {
     };
 
     // hit api route
-    const response = await fetch('api/log-exercise', {
+    await fetch('api/log-exercise', {
       method: 'POST',
       body: JSON.stringify({ ...data }),
     });
-
-    const json = (await response.json()) as ResponseData;
-    console.log({ json });
 
     setExercise('');
     setWeight('');
@@ -83,9 +83,12 @@ function LoggerPage() {
     setReps(item.reps.toString());
   };
 
-  const confirmEdit = () => {
+  const confirmEdit = async () => {
     if (!exercise || !weight || !reps) return;
-    const item = {
+
+    const itemId = items[editIndex].id;
+    const item: ExerciseItem = {
+      id: itemId,
       exercise,
       weight: +weight,
       reps: +reps,
@@ -94,6 +97,17 @@ function LoggerPage() {
     itemsCopy[editIndex] = item;
     setItems(itemsCopy);
     setIsEditing(false);
+
+    const data = {
+      item,
+    };
+
+    // send update to db
+    await fetch('api/update-exercise', {
+      method: 'PUT',
+      body: JSON.stringify({ ...data }),
+    });
+
     setExercise('');
     setWeight('');
     setReps('');

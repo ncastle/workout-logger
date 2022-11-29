@@ -18,9 +18,11 @@
     "next": "13.0.3",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "typescript": "4.9.3"
+    "typescript": "4.9.3",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
+    "@types/uuid": "^8.3.4",
     "autoprefixer": "^10.4.13",
     "eslint-config-kentcdodds": "^20.4.0",
     "postcss": "^8.4.19",

@@ -3,6 +3,7 @@ import { NextApiRequest } from 'next';
 import { Exercise, User } from '@prisma/client';
 
 export type ExerciseItem = {
+  id: string;
   exercise: string;
   weight: number;
   reps: number;

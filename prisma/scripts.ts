@@ -50,9 +50,32 @@ export async function getExercises(email: string): Promise<ExerciseItem[]> {
       user: { email },
     },
     select: {
+      id: true,
       exercise: true,
       reps: true,
       weight: true,
     },
   });
+}
+
+// update exercise based on the item id
+// Required Params: an ExerciseItem
+export async function updateExercise(
+  item: ExerciseItem
+): Promise<ExerciseItem> {
+  const exercise = await prisma.exercise.update({
+    where: { id: item.id },
+    data: {
+      exercise: item.exercise,
+      weight: item.weight,
+      reps: item.reps,
+    },
+    select: {
+      id: true,
+      exercise: true,
+      reps: true,
+      weight: true,
+    },
+  });
+  return exercise;
 }
