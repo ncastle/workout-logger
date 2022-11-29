@@ -1,6 +1,7 @@
 import { ChangeEventHandler, useEffect, useState } from 'react';
 import { v4 as uuid } from 'uuid';
-import { ExerciseItem, ResponseData } from '../utils/types';
+import { ExerciseItem } from '../utils/types';
+import { fetchExercises } from './utils';
 
 function LoggerPage() {
   const [items, setItems] = useState([] as ExerciseItem[]);
@@ -11,17 +12,7 @@ function LoggerPage() {
   const [editIndex, setEditIndex] = useState(0);
 
   useEffect(() => {
-    const fetchExercises = async () => {
-      const options: RequestInit = {
-        method: 'GET',
-      };
-      const reqQuery = encodeURIComponent('nick@ncdev.io');
-      const response = await fetch(`/api/get-exercises/${reqQuery}`, options);
-      const json = (await response.json()) as ResponseData;
-      const exercises = json.data as ExerciseItem[];
-      setItems(exercises);
-    };
-    fetchExercises().catch((error: Error) => {
+    fetchExercises(setItems).catch((error: Error) => {
       console.error(error.message);
     });
   }, []);
@@ -69,10 +60,15 @@ function LoggerPage() {
     setReps('');
   };
 
-  const handleDelete = (i: number) => {
+  const handleDelete = async (i: number) => {
+    const itemId = items[i].id;
     const itemsCopy = [...items];
     itemsCopy.splice(i, 1);
     setItems(itemsCopy);
+
+    await fetch(`api/delete-exercise/${itemId}`, {
+      method: 'DELETE',
+    });
   };
 
   const startEdit = (item: ExerciseItem, index: number) => {

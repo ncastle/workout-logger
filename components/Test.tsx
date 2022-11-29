@@ -39,6 +39,31 @@ function TestPage() {
     console.log({ json });
   };
 
+  const createItem = async () => {
+    const response = await fetch('api/log-exercise', {
+      method: 'POST',
+      body: JSON.stringify({
+        item: {
+          id: 'test-id',
+          exercise: 'test',
+          reps: 1,
+          weight: 1,
+        },
+        userEmail: 'nick@ncdev.io',
+      }),
+    });
+    const json = (await response.json()) as ResponseData;
+    console.log({ json });
+  };
+
+  const deleteItem = async () => {
+    const response = await fetch('api/delete-exercise/test-id', {
+      method: 'DELETE',
+    });
+    const json = (await response.json()) as ResponseData;
+    console.log({ json });
+  };
+
   return (
     <main>
       <button
@@ -58,6 +83,18 @@ function TestPage() {
         onClick={find}
       >
         Test Find
+      </button>
+      <button
+        className='rounded bg-white border border-gray-500 py-px px-[6px] submit'
+        onClick={createItem}
+      >
+        CREATEITEM
+      </button>
+      <button
+        className='rounded bg-white border border-gray-500 py-px px-[6px] submit'
+        onClick={deleteItem}
+      >
+        DELETEITEM
       </button>
     </main>
   );

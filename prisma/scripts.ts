@@ -26,6 +26,7 @@ export async function logExercise(
   try {
     const exercise = await prisma.exercise.create({
       data: {
+        id: item.id,
         exercise: item.exercise,
         weight: item.weight,
         reps: item.reps,
@@ -70,6 +71,21 @@ export async function updateExercise(
       weight: item.weight,
       reps: item.reps,
     },
+    select: {
+      id: true,
+      exercise: true,
+      reps: true,
+      weight: true,
+    },
+  });
+  return exercise;
+}
+
+export async function deleteExercise(
+  exerciseId: string
+): Promise<ExerciseItem> {
+  const exercise = await prisma.exercise.delete({
+    where: { id: exerciseId },
     select: {
       id: true,
       exercise: true,
