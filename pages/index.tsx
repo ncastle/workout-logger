@@ -18,13 +18,14 @@ export default function Home() {
   };
 
   return (
-    <main id='app'>
+    <main id='app' className='px-8 pb-12'>
       <Head>
         <title>Workout App</title>
         <meta name='description' content='Workout logging application' />
         <link rel='icon' href='/favicon.ico' />
+        <link rel='stylesheet' />
       </Head>
-      <nav className=''>
+      <nav className='sticky top-0 bg-[#D3DEFF] pt-8 pb-2'>
         <ul className='flex gap-1 mb-2'>
           <li className='border-black' onClick={() => setPage('logger')}>
             Logger

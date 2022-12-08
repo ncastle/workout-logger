@@ -115,7 +115,43 @@ function LoggerPage() {
 
   return (
     <>
-      <form>
+      {!!items.length && (
+        <ul className='h-4/5 overflow-scroll'>
+          {items.map((item, i) => (
+            <li className='item rounded' key={i}>
+              <div>
+                <p className='text-base whitespace-pre-line'>
+                  {`${item.exercise} - \n ${item.reps} reps @ ${item.weight} lbs`}
+                </p>
+              </div>
+
+              {isEditing && isEditIndex(i) ? (
+                <button
+                  className='rounded text-base bg-white border border-gray-500 py-px px-[6px]'
+                  onClick={() => confirmEdit()}
+                >
+                  confirm
+                </button>
+              ) : (
+                <button
+                  className='rounded text-base bg-white border border-gray-500 py-px px-[6px]'
+                  onClick={() => startEdit(item, i)}
+                >
+                  edit
+                </button>
+              )}
+              <button
+                className='rounded text-base bg-white border border-gray-500 py-px px-[6px]'
+                onClick={() => handleDelete(i)}
+              >
+                delete
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <form className='sticky bottom-8 bg-[#D3DEFF] pt-4'>
         <div className='flex w-full gap-4'>
           <input
             className='rounded min-w-0 basis-2/4'
@@ -159,42 +195,6 @@ function LoggerPage() {
           </button>
         )}
       </form>
-
-      {!!items.length && (
-        <ul>
-          {items.map((item, i) => (
-            <li className='item rounded' key={i}>
-              <div>
-                <p className='text-base whitespace-pre-line'>
-                  {`${item.exercise} - \n ${item.reps} reps @ ${item.weight} lbs`}
-                </p>
-              </div>
-
-              {isEditing && isEditIndex(i) ? (
-                <button
-                  className='rounded text-base bg-white border border-gray-500 py-px px-[6px]'
-                  onClick={() => confirmEdit()}
-                >
-                  confirm
-                </button>
-              ) : (
-                <button
-                  className='rounded text-base bg-white border border-gray-500 py-px px-[6px]'
-                  onClick={() => startEdit(item, i)}
-                >
-                  edit
-                </button>
-              )}
-              <button
-                className='rounded text-base bg-white border border-gray-500 py-px px-[6px]'
-                onClick={() => handleDelete(i)}
-              >
-                delete
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
     </>
   );
 }
