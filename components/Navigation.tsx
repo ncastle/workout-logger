@@ -11,6 +11,9 @@ function Navigation(props: NavigationProps) {
         <li className='border-black' onClick={() => setPage('logger')}>
           Logger
         </li>
+        <li className='border-black' onClick={() => setPage('days')}>
+          Days
+        </li>
         <li className='border-black' onClick={() => setPage('test')}>
           Test
         </li>
