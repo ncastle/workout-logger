@@ -23,7 +23,6 @@ export default function Home() {
         <title>Workout App</title>
         <meta name='description' content='Workout logging application' />
         <link rel='icon' href='/favicon.ico' />
-        <link rel='stylesheet' />
       </Head>
       <nav className='sticky top-0 bg-[#D3DEFF] pt-8 pb-2'>
         <ul className='flex gap-1 mb-2'>
