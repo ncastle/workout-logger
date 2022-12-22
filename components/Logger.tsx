@@ -11,10 +11,12 @@ function LoggerPage() {
   const [weight, setWeight] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [editIndex, setEditIndex] = useState(0);
+  const [loggerError, setLoggerError] = useState('');
 
   useEffect(() => {
     fetchExercises(setItems).catch((error: Error) => {
-      console.error(error.message);
+      console.error('Error fetching exercises: ', error);
+      setLoggerError(error.message);
     });
   }, []);
 
@@ -116,6 +118,7 @@ function LoggerPage() {
 
   return (
     <>
+      {loggerError && <div>Something Went wrong!</div>}
       {!!items.length && (
         <ul className='h-4/5 overflow-scroll'>
           {items.map((item, i) => (

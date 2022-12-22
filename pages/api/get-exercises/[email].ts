@@ -1,8 +1,7 @@
 import type { NextApiResponse } from 'next';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { ApiError } from 'next/dist/server/api-utils';
 import { MyNextApiRequest, ResponseData } from '../../../utils/types';
 import { getExercises } from '../../../prisma/scripts';
+import { getErrorMessage } from '../../../utils/error';
 
 export default async function handler(
   req: MyNextApiRequest,
@@ -17,12 +16,16 @@ export default async function handler(
       result: `Succesfully retrieved exercises for user with email ${email}`,
       data: exercises,
     });
-  } catch (error: ApiError | unknown) {
-    console.log('error caught in log-exercise api');
+  } catch (error: unknown) {
+    // this allows for seeing the actual prisma error message, along with the clientVersion
+    // data, otherwise the message gets lost somewhere in the Response
+    const assertedError = error as Error;
+    const theError = { ...assertedError, message: getErrorMessage(error) };
+
     res.status(500).json({
-      result: 'Error trying to log exercise',
-      data: null,
-      error,
+      result: 'Error trying to get exercises',
+      data: [],
+      error: theError,
     });
   }
 }

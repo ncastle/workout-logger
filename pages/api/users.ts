@@ -1,11 +1,10 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiResponse } from 'next';
 import { User } from '@prisma/client';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import type { ApiError } from 'next/dist/server/api-utils';
 import { createUser, getUsers } from '../../prisma/scripts';
 import { UserData } from '../../components/Test';
 import { MyNextApiRequest, ResponseData } from '../../utils/types';
+import { getErrorMessage } from '../../utils/error';
 
 async function handlePostRequest(req: MyNextApiRequest): Promise<User> {
   const userData = JSON.parse(req.body) as UserData;
@@ -43,12 +42,16 @@ export default async function handler(
       default:
         break;
     }
-  } catch (error: ApiError | unknown) {
-    console.log(error);
+  } catch (error: unknown) {
+    // this allows for seeing the actual prisma error message, along with the clientVersion
+    // data, otherwise the message gets lost somewhere in the Response
+    const assertedError = error as Error;
+    const theError = { ...assertedError, message: getErrorMessage(error) };
+
     return res.status(500).json({
       result: 'Something went wrong during request, see error for more details',
       data: null,
-      error,
+      error: theError,
     });
   }
 }

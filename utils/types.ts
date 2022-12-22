@@ -1,6 +1,6 @@
-import { ApiError } from 'next/dist/server/api-utils';
 import { NextApiRequest } from 'next';
 import { Exercise, User } from '@prisma/client';
+import { ErrorWithMessage } from './error';
 
 export type ExerciseItem = {
   id: string;
@@ -11,7 +11,7 @@ export type ExerciseItem = {
 
 export type ResponseData = {
   result: string;
-  error?: ApiError | unknown;
+  error?: ErrorWithMessage;
   // use data field to cover all responses
   // TODO: could create more specific ResponseData types which
   data:
