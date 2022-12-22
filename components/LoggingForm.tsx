@@ -23,7 +23,7 @@ function LoggingForm(props: LoggingFormProps) {
   } = props;
 
   return (
-    <form className='sticky bottom-0 h-[15%] bg-[#D3DEFF] pt-4'>
+    <form className='fixed bottom-0 h-[15vh] bg-[#bec8e6] pt-4 px-6'>
       <div className='flex w-full gap-4'>
         <input
           className='rounded min-w-0 basis-2/4'

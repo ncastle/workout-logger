@@ -1,6 +1,7 @@
 import { ChangeEventHandler, useEffect, useState } from 'react';
 import { v4 as uuid } from 'uuid';
 import { ExerciseItem } from '../utils/types';
+import ExerciseList from './ExerciseList';
 import LoggingForm from './LoggingForm';
 import { fetchExercises } from './utils';
 
@@ -112,48 +113,21 @@ function LoggerPage() {
     setReps('');
   };
 
-  const isEditIndex = (i: number) => {
+  const isEditIndex = (i: number): boolean => {
     return editIndex === i;
   };
 
   return (
     <>
       {loggerError && <div>Something Went wrong!</div>}
-      {!!items.length && (
-        <ul className='overflow-scroll'>
-          {items.map((item, i) => (
-            <li className='item rounded' key={i}>
-              <div>
-                <p className='text-base whitespace-pre-line'>
-                  {`${item.exercise} - \n ${item.reps} reps @ ${item.weight} lbs`}
-                </p>
-              </div>
-
-              {isEditing && isEditIndex(i) ? (
-                <button
-                  className='rounded text-base bg-white border border-gray-500 py-px px-[6px]'
-                  onClick={() => confirmEdit()}
-                >
-                  confirm
-                </button>
-              ) : (
-                <button
-                  className='rounded text-base bg-white border border-gray-500 py-px px-[6px]'
-                  onClick={() => startEdit(item, i)}
-                >
-                  edit
-                </button>
-              )}
-              <button
-                className='rounded text-base bg-white border border-gray-500 py-px px-[6px]'
-                onClick={() => handleDelete(i)}
-              >
-                delete
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
+      <ExerciseList
+        confirmEdit={confirmEdit}
+        handleDelete={handleDelete}
+        isEditIndex={isEditIndex}
+        isEditing
+        items={items}
+        startEdit={startEdit}
+      />
 
       <LoggingForm
         confirmEdit={confirmEdit}
