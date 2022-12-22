@@ -5,6 +5,8 @@ import ExerciseList from './ExerciseList';
 import LoggingForm from './LoggingForm';
 import { fetchExercises } from './utils';
 
+// TODO: I think I can pull some of the state and functionality out
+// of the component and create a useReducer
 function LoggerPage() {
   const [items, setItems] = useState([] as ExerciseItem[]);
   const [exercise, setExercise] = useState('');
@@ -14,6 +16,7 @@ function LoggerPage() {
   const [editIndex, setEditIndex] = useState(0);
   const [loggerError, setLoggerError] = useState('');
 
+  // fetches the exercises from the mysql database on load/refresh
   useEffect(() => {
     fetchExercises(setItems).catch((error: Error) => {
       console.error('Error fetching exercises: ', error);
@@ -21,6 +24,7 @@ function LoggerPage() {
     });
   }, []);
 
+  // ChangeEventHandler function for the logger form
   const handleChange: ChangeEventHandler<HTMLInputElement> = (evt) => {
     const { name, value } = evt.target;
     if (name === 'exercise') {
@@ -34,6 +38,8 @@ function LoggerPage() {
     }
   };
 
+  // constructs an ExerciseItem, pushes new item to items array useState,
+  // logs the exercise in database, then resets form fields
   const handleSubmit = async () => {
     if (!exercise || !weight || !reps) return;
     const item: ExerciseItem = {
@@ -64,6 +70,7 @@ function LoggerPage() {
     setReps('');
   };
 
+  // removes an ExerciseItem from the state and deletes from db
   const handleDelete = async (i: number) => {
     const itemId = items[i].id;
     const itemsCopy = [...items];
