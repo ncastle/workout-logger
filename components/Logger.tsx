@@ -120,7 +120,7 @@ function LoggerPage() {
     <>
       {loggerError && <div>Something Went wrong!</div>}
       {!!items.length && (
-        <ul className='h-4/5 overflow-scroll'>
+        <ul className='overflow-scroll'>
           {items.map((item, i) => (
             <li className='item rounded' key={i}>
               <div>
