@@ -13,7 +13,8 @@ function LoggerPage() {
   const [reps, setReps] = useState('');
   const [weight, setWeight] = useState('');
   const [isEditing, setIsEditing] = useState(false);
-  const [editIndex, setEditIndex] = useState(0);
+  // default is -1 because indexes are going to be > 0
+  const [editIndex, setEditIndex] = useState(-1);
   const [loggerError, setLoggerError] = useState('');
 
   // fetches the exercises from the mysql database on load/refresh
@@ -118,6 +119,7 @@ function LoggerPage() {
     setExercise('');
     setWeight('');
     setReps('');
+    setEditIndex(-1);
   };
 
   const isEditIndex = (i: number): boolean => {
