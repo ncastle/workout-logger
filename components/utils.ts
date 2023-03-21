@@ -1,9 +1,6 @@
-import { Dispatch, SetStateAction } from 'react';
 import type { ExerciseItem, ResponseData } from '../utils/types';
 
-export const fetchExercises = async (
-  setFunc: Dispatch<SetStateAction<ExerciseItem[]>>
-) => {
+export const fetchExercises = async () => {
   const options: RequestInit = {
     method: 'GET',
   };
@@ -14,5 +11,5 @@ export const fetchExercises = async (
     throw Error(json.error.message);
   }
   const exercises = json.data as ExerciseItem[];
-  setFunc(exercises);
+  return exercises;
 };

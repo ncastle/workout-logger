@@ -1,25 +1,20 @@
 import { ChangeEventHandler } from 'react';
+import { LoggerState } from '../utils/types';
 
 type LoggingFormProps = {
   confirmEdit: () => Promise<void>;
-  exercise: string;
   handleChange: ChangeEventHandler<HTMLInputElement>;
   handleSubmit: () => Promise<void>;
-  isEditing: boolean;
-  reps: string;
-  weight: string;
+  state: LoggerState;
 };
 
 // Component is a form that handles entering and editing ExericseItem values
 function LoggingForm(props: LoggingFormProps) {
   const {
     confirmEdit,
-    exercise,
     handleChange,
     handleSubmit,
-    isEditing,
-    reps,
-    weight,
+    state: { exercise, reps, weight, isEditing },
   } = props;
 
   return (

@@ -9,6 +9,32 @@ export type ExerciseItem = {
   reps: number;
 };
 
+export type LoggerAction = {
+  type: string;
+  payload?: LoggerPayload;
+};
+
+// logger payload is essentially the same as the logger state
+// put all properties are optional for setting behavior
+export type LoggerPayload = {
+  editIndex?: number;
+  editItem?: ExerciseItem;
+  exercise?: string;
+  isEditing?: boolean;
+  items?: ExerciseItem[];
+  reps?: string;
+  weight?: string;
+};
+
+export type LoggerState = {
+  editIndex: number;
+  exercise: string;
+  isEditing: boolean;
+  items: ExerciseItem[];
+  reps: string;
+  weight: string;
+};
+
 export type ResponseData = {
   result: string;
   error?: ErrorWithMessage;

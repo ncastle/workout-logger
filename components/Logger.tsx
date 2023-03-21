@@ -1,48 +1,104 @@
-import { ChangeEventHandler, useEffect, useState } from 'react';
+import {
+  ChangeEventHandler,
+  useEffect,
+  useReducer,
+  useState,
+  Reducer,
+} from 'react';
 import { v4 as uuid } from 'uuid';
-import { ExerciseItem } from '../utils/types';
+import { ExerciseItem, LoggerAction, LoggerState } from '../utils/types';
 import ExerciseList from './ExerciseList';
 import LoggingForm from './LoggingForm';
 import { fetchExercises } from './utils';
 
+const initialState: LoggerState = {
+  editIndex: -1,
+  exercise: '',
+  isEditing: false,
+  items: [],
+  reps: '',
+  weight: '',
+};
+
+const ActionTypes = {
+  RESET_FORM: 'RESET_FORM',
+  SET: 'SET',
+  START_EDIT: 'START_EDIT',
+};
+
+function reducer(state: LoggerState, action: LoggerAction) {
+  const { type, payload } = action;
+  switch (type) {
+    case ActionTypes.SET:
+      return { ...state, ...payload };
+    case ActionTypes.START_EDIT: {
+      const { editIndex, editItem } = payload;
+
+      return {
+        ...state,
+        isEditing: true,
+        editIndex,
+        exercise: editItem.exercise,
+        reps: editItem.reps.toString(),
+        weight: editItem.weight.toString(),
+      };
+    }
+    case ActionTypes.RESET_FORM:
+      return {
+        ...state,
+        exercise: '',
+        reps: '',
+        weight: '',
+        isEditing: false,
+        editIndex: -1,
+      };
+    default:
+      throw new Error('Unknown action type');
+  }
+}
+
+function initState() {
+  return { ...initialState };
+}
+
 // TODO: I think I can pull some of the state and functionality out
 // of the component and create a useReducer
 function LoggerPage() {
-  const [items, setItems] = useState([] as ExerciseItem[]);
-  const [exercise, setExercise] = useState('');
-  const [reps, setReps] = useState('');
-  const [weight, setWeight] = useState('');
-  const [isEditing, setIsEditing] = useState(false);
+  const [state, dispatch] = useReducer(
+    reducer as Reducer<LoggerState, LoggerAction>,
+    initialState,
+    initState
+  );
+
+  // const [isEditing, setIsEditing] = useState(false);
   // default is -1 because indexes are going to be > 0
-  const [editIndex, setEditIndex] = useState(-1);
+  // const [editIndex, setEditIndex] = useState(-1);
   const [loggerError, setLoggerError] = useState('');
 
   // fetches the exercises from the mysql database on load/refresh
   useEffect(() => {
-    fetchExercises(setItems).catch((error: Error) => {
-      console.error('Error fetching exercises: ', error);
-      setLoggerError(error.message);
-    });
+    fetchExercises()
+      .then((exercises) => {
+        dispatch({ type: ActionTypes.SET, payload: { items: exercises } });
+      })
+      .catch((error: Error) => {
+        console.error('Error fetching exercises: ', error);
+        setLoggerError(error.message);
+      });
   }, []);
 
   // ChangeEventHandler function for the logger form
   const handleChange: ChangeEventHandler<HTMLInputElement> = (evt) => {
     const { name, value } = evt.target;
-    if (name === 'exercise') {
-      setExercise(value);
-    }
-    if (name === 'reps') {
-      setReps(value);
-    }
-    if (name === 'weight') {
-      setWeight(value);
-    }
+    dispatch({ type: ActionTypes.SET, payload: { [name]: value } });
   };
 
   // constructs an ExerciseItem, pushes new item to items array useState,
   // logs the exercise in database, then resets form fields
   const handleSubmit = async () => {
+    const { exercise, weight, reps, items } = state;
     if (!exercise || !weight || !reps) return;
+
     const item: ExerciseItem = {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
       id: uuid(),
@@ -52,7 +108,7 @@ function LoggerPage() {
     };
     const itemsCopy: ExerciseItem[] = [...items];
     itemsCopy.push(item);
-    setItems(itemsCopy);
+    dispatch({ type: ActionTypes.SET, payload: { items: itemsCopy } });
 
     // create data for req body
     const data = {
@@ -66,32 +122,24 @@ function LoggerPage() {
       body: JSON.stringify({ ...data }),
     });
 
-    setExercise('');
-    setWeight('');
-    setReps('');
+    dispatch({ type: ActionTypes.RESET_FORM });
   };
 
   // removes an ExerciseItem from the state and deletes from db
   const handleDelete = async (i: number) => {
+    const { items } = state;
     const itemId = items[i].id;
     const itemsCopy = [...items];
     itemsCopy.splice(i, 1);
-    setItems(itemsCopy);
+    dispatch({ type: ActionTypes.SET, payload: { items: itemsCopy } });
 
     await fetch(`api/delete-exercise/${itemId}`, {
       method: 'DELETE',
     });
   };
 
-  const startEdit = (item: ExerciseItem, index: number) => {
-    setIsEditing(true);
-    setEditIndex(index);
-    setExercise(item.exercise);
-    setWeight(item.weight.toString());
-    setReps(item.reps.toString());
-  };
-
   const confirmEdit = async () => {
+    const { exercise, weight, reps, items, editIndex } = state;
     if (!exercise || !weight || !reps) return;
 
     const itemId = items[editIndex].id;
@@ -103,8 +151,7 @@ function LoggerPage() {
     };
     const itemsCopy = [...items];
     itemsCopy[editIndex] = item;
-    setItems(itemsCopy);
-    setIsEditing(false);
+    dispatch({ type: ActionTypes.SET, payload: { items: itemsCopy } });
 
     const data = {
       item,
@@ -116,14 +163,7 @@ function LoggerPage() {
       body: JSON.stringify({ ...data }),
     });
 
-    setExercise('');
-    setWeight('');
-    setReps('');
-    setEditIndex(-1);
-  };
-
-  const isEditIndex = (i: number): boolean => {
-    return editIndex === i;
+    dispatch({ type: ActionTypes.RESET_FORM });
   };
 
   return (
@@ -131,24 +171,24 @@ function LoggerPage() {
       {loggerError && <div>Something Went wrong!</div>}
       <ExerciseList
         confirmEdit={confirmEdit}
+        dispatch={dispatch}
         handleDelete={handleDelete}
         isEditIndex={isEditIndex}
-        isEditing
-        items={items}
-        startEdit={startEdit}
+        state={state}
       />
 
       <LoggingForm
         confirmEdit={confirmEdit}
-        exercise={exercise}
         handleChange={handleChange}
         handleSubmit={handleSubmit}
-        isEditing={isEditing}
-        reps={reps}
-        weight={weight}
+        state={state}
       />
     </>
   );
 }
 
 export default LoggerPage;
+
+function isEditIndex(editIndex: number, i: number): boolean {
+  return editIndex === i;
+}

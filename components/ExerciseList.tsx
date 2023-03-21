@@ -1,22 +1,21 @@
-import { ExerciseItem } from '../utils/types';
+import { Dispatch } from 'react';
+import { LoggerAction, LoggerState } from '../utils/types';
 
 type ExerciseListProps = {
   confirmEdit: () => Promise<void>;
+  dispatch: Dispatch<LoggerAction>;
   handleDelete: (i: number) => Promise<void>;
-  isEditIndex: (i: number) => boolean;
-  isEditing: boolean;
-  items: ExerciseItem[];
-  startEdit: (item: ExerciseItem, i: number) => void;
+  isEditIndex: (editIndex: number, i: number) => boolean;
+  state: LoggerState;
 };
 
 function ExerciseList(props: ExerciseListProps) {
   const {
     confirmEdit,
+    dispatch,
     handleDelete,
     isEditIndex,
-    isEditing,
-    items,
-    startEdit,
+    state: { editIndex, isEditing, items },
   } = props;
 
   return (
@@ -31,7 +30,7 @@ function ExerciseList(props: ExerciseListProps) {
                 </p>
               </div>
 
-              {isEditing && isEditIndex(i) ? (
+              {isEditing && isEditIndex(editIndex, i) ? (
                 <button
                   className='rounded text-base bg-white border border-gray-500 py-px px-[6px]'
                   onClick={() => confirmEdit()}
@@ -41,7 +40,12 @@ function ExerciseList(props: ExerciseListProps) {
               ) : (
                 <button
                   className='rounded text-base bg-white border border-gray-500 py-px px-[6px]'
-                  onClick={() => startEdit(item, i)}
+                  onClick={() =>
+                    dispatch({
+                      type: 'START_EDIT',
+                      payload: { editItem: item, editIndex: i },
+                    })
+                  }
                 >
                   edit
                 </button>
