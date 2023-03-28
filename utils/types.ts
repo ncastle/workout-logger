@@ -2,6 +2,12 @@ import { NextApiRequest } from 'next';
 import { Exercise, User } from '@prisma/client';
 import { ErrorWithMessage } from './error';
 
+export const ActionTypes = {
+  RESET_FORM: 'RESET_FORM',
+  SET: 'SET',
+  START_EDIT: 'START_EDIT',
+};
+
 export type ExerciseItem = {
   id: string;
   exercise: string;

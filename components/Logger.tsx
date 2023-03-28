@@ -6,7 +6,13 @@ import {
   Reducer,
 } from 'react';
 import { v4 as uuid } from 'uuid';
-import { ExerciseItem, LoggerAction, LoggerState } from '../utils/types';
+import {
+  ActionTypes,
+  ExerciseItem,
+  LoggerAction,
+  LoggerPayload,
+  LoggerState,
+} from '../utils/types';
 import ExerciseList from './ExerciseList';
 import LoggingForm from './LoggingForm';
 import { fetchExercises } from './utils';
@@ -20,27 +26,21 @@ const initialState: LoggerState = {
   weight: '',
 };
 
-const ActionTypes = {
-  RESET_FORM: 'RESET_FORM',
-  SET: 'SET',
-  START_EDIT: 'START_EDIT',
-};
-
 function reducer(state: LoggerState, action: LoggerAction) {
   const { type, payload } = action;
   switch (type) {
     case ActionTypes.SET:
       return { ...state, ...payload };
     case ActionTypes.START_EDIT: {
-      const { editIndex, editItem } = payload;
+      const { editIndex, editItem } = payload as LoggerPayload;
 
       return {
         ...state,
         isEditing: true,
         editIndex,
-        exercise: editItem.exercise,
-        reps: editItem.reps.toString(),
-        weight: editItem.weight.toString(),
+        exercise: editItem?.exercise,
+        reps: editItem?.reps.toString(),
+        weight: editItem?.weight.toString(),
       };
     }
     case ActionTypes.RESET_FORM:
@@ -57,17 +57,12 @@ function reducer(state: LoggerState, action: LoggerAction) {
   }
 }
 
-function initState() {
-  return { ...initialState };
-}
-
 // TODO: I think I can pull some of the state and functionality out
 // of the component and create a useReducer
 function LoggerPage() {
   const [state, dispatch] = useReducer(
     reducer as Reducer<LoggerState, LoggerAction>,
-    initialState,
-    initState
+    initialState
   );
 
   // const [isEditing, setIsEditing] = useState(false);
@@ -100,13 +95,12 @@ function LoggerPage() {
     if (!exercise || !weight || !reps) return;
 
     const item: ExerciseItem = {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
       id: uuid(),
       exercise,
       weight: +weight,
       reps: +reps,
     };
-    const itemsCopy: ExerciseItem[] = [...items];
+    const itemsCopy = [...items];
     itemsCopy.push(item);
     dispatch({ type: ActionTypes.SET, payload: { items: itemsCopy } });
 
@@ -142,13 +136,17 @@ function LoggerPage() {
     const { exercise, weight, reps, items, editIndex } = state;
     if (!exercise || !weight || !reps) return;
 
+    // get id of item that is being edited
     const itemId = items[editIndex].id;
+
+    // create a new ExerciseItem using updated values from state
     const item: ExerciseItem = {
       id: itemId,
       exercise,
       weight: +weight,
       reps: +reps,
     };
+    // update the items array with the new item value
     const itemsCopy = [...items];
     itemsCopy[editIndex] = item;
     dispatch({ type: ActionTypes.SET, payload: { items: itemsCopy } });
@@ -170,10 +168,8 @@ function LoggerPage() {
     <>
       {loggerError && <div>Something Went wrong!</div>}
       <ExerciseList
-        confirmEdit={confirmEdit}
         dispatch={dispatch}
         handleDelete={handleDelete}
-        isEditIndex={isEditIndex}
         state={state}
       />
 
@@ -188,7 +184,3 @@ function LoggerPage() {
 }
 
 export default LoggerPage;
-
-function isEditIndex(editIndex: number, i: number): boolean {
-  return editIndex === i;
-}

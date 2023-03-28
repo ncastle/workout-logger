@@ -1,20 +1,16 @@
 import { Dispatch } from 'react';
-import { LoggerAction, LoggerState } from '../utils/types';
+import { ActionTypes, LoggerAction, LoggerState } from '../utils/types';
 
 type ExerciseListProps = {
-  confirmEdit: () => Promise<void>;
   dispatch: Dispatch<LoggerAction>;
   handleDelete: (i: number) => Promise<void>;
-  isEditIndex: (editIndex: number, i: number) => boolean;
   state: LoggerState;
 };
 
 function ExerciseList(props: ExerciseListProps) {
   const {
-    confirmEdit,
     dispatch,
     handleDelete,
-    isEditIndex,
     state: { editIndex, isEditing, items },
   } = props;
 
@@ -33,16 +29,16 @@ function ExerciseList(props: ExerciseListProps) {
               {isEditing && isEditIndex(editIndex, i) ? (
                 <button
                   className='rounded text-base bg-white border border-gray-500 py-px px-[6px]'
-                  onClick={() => confirmEdit()}
+                  onClick={() => dispatch({ type: ActionTypes.RESET_FORM })}
                 >
-                  confirm
+                  cancel
                 </button>
               ) : (
                 <button
                   className='rounded text-base bg-white border border-gray-500 py-px px-[6px]'
                   onClick={() =>
                     dispatch({
-                      type: 'START_EDIT',
+                      type: ActionTypes.START_EDIT,
                       payload: { editItem: item, editIndex: i },
                     })
                   }
@@ -67,3 +63,7 @@ function ExerciseList(props: ExerciseListProps) {
 }
 
 export default ExerciseList;
+
+function isEditIndex(editIndex: number, i: number): boolean {
+  return editIndex === i;
+}
