@@ -1,19 +1,55 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { v4 as uuid } from 'uuid';
+import { DayItem } from '../utils/types';
 import DayList from './DayList';
+import { fetchDays } from './utils';
 
 function DaysPage() {
-  const [days, setDays] = useState<Date[]>([]);
+  const [days, setDays] = useState<DayItem[]>([]);
 
-  function createDay() {
-    console.log('creating day', Date());
+  useEffect(() => {
+    fetchDays()
+      .then((data) => {
+        const dayItems: DayItem[] = data.map((day): DayItem => {
+          return {
+            ...day,
+            date: new Date(day.date),
+          };
+        });
+        setDays(dayItems);
+      })
+      .catch((error: Error) => {
+        console.error(error.message);
+      });
+  }, []);
+
+  const createDay = async () => {
     const newDate = new Date();
+
+    // create a new Day object
+    const newDay: DayItem = {
+      id: uuid(),
+      date: newDate,
+      workoutType: 'none',
+    };
+
     const daysCopy = [...days];
-    daysCopy.push(newDate);
+    daysCopy.push(newDay);
     setDays(daysCopy);
-  }
+
+    const data = {
+      dayItem: newDay,
+      userEmail: 'nick@ncdev.io',
+    };
+
+    await fetch('/api/create/day', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  };
 
   return (
-    <div>
+    <>
       <p>Days page</p>
       <button
         type='button'
@@ -23,7 +59,7 @@ function DaysPage() {
         Create new log day
       </button>
       <DayList days={days} />
-    </div>
+    </>
   );
 }
 

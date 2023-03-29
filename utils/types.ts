@@ -8,6 +8,12 @@ export const ActionTypes = {
   START_EDIT: 'START_EDIT',
 };
 
+export type DayItem = {
+  id: string;
+  workoutType: string;
+  date: Date;
+};
+
 export type ExerciseItem = {
   id: string;
   exercise: string;
@@ -53,6 +59,8 @@ export type ResponseData = {
     | Exercise[]
     | ExerciseItem
     | ExerciseItem[]
+    | DayItem
+    | DayItem[]
     | null;
 };
 

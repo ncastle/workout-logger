@@ -1,8 +1,8 @@
 // prisma scripts that must be run on the server
 // will through an error if called on Client
-import { Exercise, User } from '@prisma/client';
+import { Day, Exercise, User } from '@prisma/client';
 import { UserData } from '../components/Test';
-import { ExerciseItem } from '../utils/types';
+import { DayItem, ExerciseItem } from '../utils/types';
 import { prisma } from './db';
 
 export async function createUser(data: UserData): Promise<User> {
@@ -114,6 +114,48 @@ export async function deleteExercise(
     })
     .catch((error) => {
       console.error('error caught in deleteExercise script');
+      throw error;
+    });
+}
+
+// Prisma call to create an Exercise and connect it to a User
+// Required params: an ExerciseItem and the user's email to link
+// Returns the created Exercise
+export async function createDay(day: DayItem, userEmail: string): Promise<Day> {
+  return prisma.day
+    .create({
+      data: {
+        id: day.id,
+        workoutType: day.workoutType,
+        date: day.date,
+        user: {
+          connect: { email: userEmail },
+        },
+      },
+    })
+    .catch((error) => {
+      console.error('error caught in createDay script');
+      throw error;
+    });
+}
+
+export async function getDays(email: string): Promise<DayItem[]> {
+  return prisma.day
+    .findMany({
+      where: {
+        user: { email },
+      },
+      select: {
+        id: true,
+        date: true,
+        workoutType: true,
+      },
+      orderBy: {
+        createdAt: 'asc',
+      },
+    })
+    .catch((error) => {
+      console.error('error caught in getExercises script');
       throw error;
     });
 }
