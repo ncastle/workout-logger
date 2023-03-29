@@ -17,7 +17,7 @@ function ExerciseList(props: ExerciseListProps) {
   return (
     <>
       {items.length ? (
-        <ul className='overflow-scroll h-[72vh] pt-2 px-4'>
+        <ul className='overflow-y-scroll h-[72vh] pt-2 px-4'>
           {items.map((item, i) => (
             <li className='item rounded' key={i}>
               <div>
