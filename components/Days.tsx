@@ -1,15 +1,20 @@
 import { useEffect, useState } from 'react';
 import { v4 as uuid } from 'uuid';
-import { DayItem } from '../utils/types';
+import type { DayItem } from '../utils/types';
 import DayList from './DayList';
 import { fetchDays } from './utils';
 
 function DaysPage() {
   const [days, setDays] = useState<DayItem[]>([]);
 
+  // TODO: Why do I have to map the date to a new Date?
+  // Date object gets sent to client as a string in json
+  // can use superjson package to handle this
+  // should also change this use effect to be a getServerSideProps call
   useEffect(() => {
     fetchDays()
       .then((data) => {
+        // this is a workaround to get the date as a Date object for now
         const dayItems: DayItem[] = data.map((day): DayItem => {
           return {
             ...day,
@@ -23,6 +28,7 @@ function DaysPage() {
       });
   }, []);
 
+  // TODO: only allow one Day to be created with the same mmddyyyy value
   const createDay = async () => {
     const newDate = new Date();
 
@@ -37,6 +43,7 @@ function DaysPage() {
     daysCopy.push(newDay);
     setDays(daysCopy);
 
+    // TODO: change hard coded email to dynamic value
     const data = {
       dayItem: newDay,
       userEmail: 'nick@ncdev.io',

@@ -6,8 +6,8 @@ import {
   Reducer,
 } from 'react';
 import { v4 as uuid } from 'uuid';
-import {
-  ActionTypes,
+import { ActionTypes } from '../utils/types';
+import type {
   ExerciseItem,
   LoggerAction,
   LoggerPayload,
