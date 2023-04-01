@@ -1,5 +1,9 @@
 import type { NextApiResponse } from 'next';
-import { DayItem, MyNextApiRequest, ResponseData } from '../../../utils/types';
+import type {
+  DayItem,
+  MyNextApiRequest,
+  ResponseData,
+} from '../../../utils/types';
 import { createDay } from '../../../prisma/scripts';
 import { getErrorMessage } from '../../../utils/error';
 

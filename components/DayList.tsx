@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { DayItem } from '../utils/types';
+import type { DayItem } from '../utils/types';
 
 type DayListProps = {
   days: Array<DayItem>;
@@ -7,7 +7,6 @@ type DayListProps = {
 
 function DayList(props: DayListProps) {
   const { days } = props;
-
   return (
     <>
       {days.length ? (
@@ -33,5 +32,7 @@ export default DayList;
 // returns localDateString in the format: MM-DD-YYYY
 // could use date-fns node package
 function getSlug(date: Date) {
-  return date.toLocaleDateString().replaceAll('/', '-');
+  const isoString = date.toISOString();
+  const encodedString = encodeURIComponent(isoString);
+  return encodedString;
 }

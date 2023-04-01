@@ -1,8 +1,8 @@
 // prisma scripts that must be run on the server
 // will through an error if called on Client
-import { Day, Exercise, User } from '@prisma/client';
+import type { Day, Exercise, User } from '@prisma/client';
+import type { DayItem, ExerciseItem } from '../utils/types';
 import { UserData } from '../components/Test';
-import { DayItem, ExerciseItem } from '../utils/types';
 import { prisma } from './db';
 
 export async function createUser(data: UserData): Promise<User> {
@@ -99,6 +99,7 @@ export async function updateExercise(
     });
 }
 
+// Deletes an exercise that has the given id
 export async function deleteExercise(
   exerciseId: string
 ): Promise<ExerciseItem> {
@@ -139,23 +140,34 @@ export async function createDay(day: DayItem, userEmail: string): Promise<Day> {
     });
 }
 
-export async function getDays(email: string): Promise<DayItem[]> {
+// Fetches all Day entries for a user with the given email
+export async function getDays(email: string): Promise<Day[]> {
   return prisma.day
     .findMany({
       where: {
         user: { email },
-      },
-      select: {
-        id: true,
-        date: true,
-        workoutType: true,
       },
       orderBy: {
         createdAt: 'asc',
       },
     })
     .catch((error) => {
-      console.error('error caught in getExercises script');
+      console.error('error caught in getDays script');
+      throw error;
+    });
+}
+
+// takes a string in ISO date format and finds and returns the first
+// match in the database
+export async function getDay(isoString: string): Promise<Day> {
+  return prisma.day
+    .findFirstOrThrow({
+      where: {
+        date: isoString,
+      },
+    })
+    .catch((error) => {
+      console.error('error caught in getDay script');
       throw error;
     });
 }
