@@ -3,6 +3,7 @@ import { v4 as uuid } from 'uuid';
 import type { DayItem } from '../utils/types';
 import DayList from './DayList';
 import { fetchDays } from './utils';
+import { datesAreEqual } from '../utils/tools';
 
 function DaysPage() {
   const [days, setDays] = useState<DayItem[]>([]);
@@ -31,6 +32,9 @@ function DaysPage() {
   // TODO: only allow one Day to be created with the same mmddyyyy value
   const createDay = async () => {
     const newDate = new Date();
+    const isExistingDay = days.find((day) => datesAreEqual(newDate, day.date));
+
+    if (isExistingDay) return;
 
     // create a new Day object
     const newDay: DayItem = {
