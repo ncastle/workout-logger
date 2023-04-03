@@ -42,15 +42,8 @@ input {
 
 li {
   background-color: lightgrey;
-  font-size: 1.5rem;
   width: 100%;
   padding: 0.5rem;
   list-style-type: none;
-  display: flex;
-  align-items: center;
   margin-bottom: 0.25rem;
-}
-
-li :first-child {
-  margin-right: auto;
 }

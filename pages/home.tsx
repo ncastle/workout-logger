@@ -3,9 +3,15 @@ import LoggerPage from '../components/Logger';
 import TestPage from '../components/Test';
 import Navigation from '../components/Navigation';
 import DaysPage from '../components/Days';
+import useUser from '../lib/useUser';
 
+// TODO: Move these to individual pages instead of switching to
+// components
 export default function Home() {
   const [page, setPage] = useState('logger');
+  const { user } = useUser({
+    redirectTo: '/',
+  });
 
   const displayPage = () => {
     switch (page) {

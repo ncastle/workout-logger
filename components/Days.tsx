@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { v4 as uuid } from 'uuid';
 import type { DayItem } from '../utils/types';
+import { datesAreEqual } from '../utils/tools';
 import DayList from './DayList';
 import { fetchDays } from './utils';
-import { datesAreEqual } from '../utils/tools';
 
 function DaysPage() {
   const [days, setDays] = useState<DayItem[]>([]);
