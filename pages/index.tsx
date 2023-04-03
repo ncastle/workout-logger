@@ -1,24 +1,21 @@
 import { useState } from 'react';
 import Head from 'next/head';
-import LoggerPage from '../components/Logger';
-import TestPage from '../components/Test';
-import Navigation from '../components/Navigation';
-import DaysPage from '../components/Days';
+import { useRouter } from 'next/router';
 
-export default function Home() {
-  const [page, setPage] = useState('logger');
+const center = `absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
+                  flex flex-col gap-4 m-auto`;
 
-  const displayPage = () => {
-    switch (page) {
-      case 'logger':
-        return <LoggerPage />;
-      case 'days':
-        return <DaysPage />;
-      case 'test':
-        return <TestPage />;
-      default:
-        return <LoggerPage />;
-    }
+export default function Landing() {
+  const [email, setEmail] = useState('');
+  const router = useRouter();
+
+  const login = async () => {
+    console.log('login using email: ', email);
+    router.push('/home').catch(console.error);
+  };
+
+  const logout = async () => {
+    console.log('logout');
   };
 
   return (
@@ -28,8 +25,29 @@ export default function Home() {
         <meta name='description' content='Workout logging application' />
         <link rel='icon' href='/favicon.ico' />
       </Head>
-      <Navigation setPage={setPage} />
-      {displayPage()}
+      <h1 className='w-fit mx-auto mt-8 text-3xl'>Workout Tracker</h1>
+      <div className={`${center} w-4/5 items-center`}>
+        <div className='w-fit'>
+          <label className='mr-2' htmlFor='email'>
+            Email:
+          </label>
+          <input
+            type='text'
+            name='email'
+            id='email'
+            defaultValue={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </div>
+        <div className='flex gap-8'>
+          <button className='w-fit' type='button' onClick={login}>
+            Login
+          </button>
+          <button className='w-fit' type='button' onClick={logout}>
+            Logout
+          </button>
+        </div>
+      </div>
     </main>
   );
 }
