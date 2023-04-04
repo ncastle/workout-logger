@@ -3,9 +3,10 @@ import * as IronSession from 'iron-session';
 declare module 'iron-session' {
   interface IronSessionData {
     user?: {
-      id: number;
+      id: string;
       email: string;
       admin?: boolean;
+      name?: string;
       isLoggedIn: boolean;
     };
   }

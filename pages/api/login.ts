@@ -1,29 +1,44 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { withSessionRoute } from '../../lib/withSession';
+import { prisma } from '../../prisma/db';
+import { hashPassword, verifyPassword } from '../../lib/password';
 
 export default withSessionRoute(loginRoute);
 
 async function loginRoute(req: NextApiRequest, res: NextApiResponse) {
-  let email;
-  try {
-    const body = JSON.parse(req.body);
-    email = body.email;
-  } catch (error) {
-    if (error instanceof Error) {
-      console.error(error.message);
-    }
+  const { email, password } = req.body;
+
+  // look up user
+  let user = await prisma.user.findFirst({
+    where: {
+      email: email,
+    },
+    select: {
+      id: true,
+      email: true,
+      password: true,
+    },
+  });
+
+  // if no user is found, send null user and message
+  if (!user) {
+    return res.send({ user, message: 'No user found with that email address' });
   }
 
-  const user = {
-    id: 123,
-    email: email ?? 'nick@ncdev.io',
-    admin: true,
-  };
+  // verify password
+  const verified = await verifyPassword(password, user.password);
 
-  console.log({ user });
-  // get user from database then:
-  req.session.user = { ...user };
-  await req.session.save();
+  // if password is wrong, send null user with message
+  if (!verified) {
+    return res.send({ user: null, message: 'Wrong password' });
+  }
 
-  res.send({ user: { ...user, isLoggedIn: true } });
+  // verified condition is extra precaution
+  if (verified && user) {
+    req.session.user = { ...user, isLoggedIn: true };
+    await req.session.save();
+    return res.send({ user: { ...user, isLoggedIn: true } });
+  } else {
+    return res.send({ user: null });
+  }
 }
