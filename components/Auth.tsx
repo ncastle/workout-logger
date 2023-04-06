@@ -96,7 +96,7 @@ export default function Auth() {
           </label>
           <input
             className='self-end w-full'
-            type='text'
+            type='email'
             name='email'
             id='email'
             value={email}
@@ -110,12 +110,13 @@ export default function Auth() {
           </label>
           <input
             className='self-end w-full'
-            type='text'
+            type='password'
             name='password'
             id='password'
             value={password}
             onChange={handleChange}
             required
+            minLength={6}
           />
         </div>
         <button className='w-full'>{getBtnText(authType)}</button>
