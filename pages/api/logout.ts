@@ -4,5 +4,5 @@ export default withSessionRoute(logoutRoute);
 
 function logoutRoute(req: NextApiRequest, res: NextApiResponse) {
   req.session.destroy();
-  res.send({ id: null, email: '', admin: false, isLoggedIn: false });
+  res.send({ id: null, email: '', name: '', isLoggedIn: false });
 }

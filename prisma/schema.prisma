@@ -14,6 +14,7 @@ model User {
   id        String     @id @default(uuid())
   email     String     @unique
   name      String?
+  password  String
   exercises Exercise[]
   days      Day[]
 }
@@ -44,3 +45,16 @@ model Day {
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
 }
+
+// model Movement {
+//   id    String @id @default(uuid())
+//   name  String
+//   // sets  Set[]
+//   notes String
+// }
+
+// model Set {
+//   id     String @id @default(uuid)
+//   weight Int
+//   reps   Int
+// }

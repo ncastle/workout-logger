@@ -9,6 +9,7 @@ export default function Auth() {
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState(false);
+  const [authType, setAuthType] = useState('login');
 
   const { mutateUser } = useUser();
 
@@ -24,10 +25,37 @@ export default function Auth() {
     }
   };
 
-  // TODO: separate login and signup, currently, a typo in a login name
-  // will just cause a new user to be created
-  const login = async (evt: ChangeEvent<HTMLFormElement>) => {
+  const toggleAuthTypeState = () => {
+    setMessage('');
+    if (authType === 'login') {
+      setAuthType('signup');
+    } else {
+      setAuthType('login');
+    }
+  };
+
+  const handleSubmit = async (evt: ChangeEvent<HTMLFormElement>) => {
     evt.preventDefault();
+
+    const json = authType === 'login' ? await login() : await signup();
+
+    if (json.user) {
+      setEmail('');
+      setTimeout(() => {
+        mutateUser(json.user);
+      }, 2000);
+    }
+
+    setMessage(json.message);
+    setError(json.error);
+    setPassword('');
+  };
+
+  const login = async (): Promise<{
+    user: { id: string; email: string; name: string; isLoggedIn: boolean };
+    message: string;
+    error: boolean;
+  }> => {
     const res = await fetch('/api/login', {
       method: 'POST',
       headers: {
@@ -36,36 +64,31 @@ export default function Auth() {
       body: JSON.stringify({ email, password }),
     });
     const json = await res.json();
+    return json;
+  };
 
-    if (json.user) {
-      setEmail('');
-      setMessage('Successfully logged in!');
-    } else if (json.message === 'Wrong password') {
-      setMessage('You entered the wrong password, try again!');
-      setError(true);
-    } else {
-      // if no user found in db, create one
-      await fetch('/api/create/user', {
-        method: 'POST',
-        headers: {
-          'Content-type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
-      setMessage(`User created using email: ${email}`);
-      setEmail('');
-    }
-    setPassword('');
-    setTimeout(() => {
-      mutateUser(json);
-    }, 2000);
+  const signup = async (): Promise<{
+    user: { id: string; email: string; name: string; isLoggedIn: boolean };
+    message: string;
+    error: boolean;
+  }> => {
+    // if no user found in db, create one
+    const res = await fetch('/api/create/user', {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    });
+    const json = await res.json();
+    return json;
   };
 
   return (
     <>
       <form
         className={`${center} flex flex-col gap-4 m-auto w-4/5 items-center h-48`}
-        onSubmit={login}
+        onSubmit={handleSubmit}
       >
         <div className='w-full flex'>
           <label className='mr-2' htmlFor='email'>
@@ -95,10 +118,24 @@ export default function Auth() {
             required
           />
         </div>
-        <button className='w-full'>Login</button>
+        <button className='w-full'>{getBtnText(authType)}</button>
 
         {<p className={clsx(error && 'text-red-600 text-center')}>{message}</p>}
+        <p
+          className='text-sm text-blue-600 cursor-pointer'
+          onClick={toggleAuthTypeState}
+        >
+          {getHelperText(authType)}
+        </p>
       </form>
     </>
   );
+}
+
+function getBtnText(authType: string) {
+  return authType === 'login' ? 'Login' : 'Sign Up';
+}
+
+function getHelperText(authType: string) {
+  return authType === 'login' ? 'No account? Sign up here' : 'Login';
 }

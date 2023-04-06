@@ -22,7 +22,11 @@ async function loginRoute(req: NextApiRequest, res: NextApiResponse) {
 
   // if no user is found, send null user and message
   if (!user) {
-    return res.send({ user, message: 'No user found with that email address' });
+    return res.send({
+      user,
+      message: 'No user found with that email address',
+      error: true,
+    });
   }
 
   // verify password
@@ -30,15 +34,27 @@ async function loginRoute(req: NextApiRequest, res: NextApiResponse) {
 
   // if password is wrong, send null user with message
   if (!verified) {
-    return res.send({ user: null, message: 'Wrong password' });
+    return res.send({
+      user: null,
+      message: 'You entered the wrong password, try again!',
+      error: true,
+    });
   }
 
   // verified condition is extra precaution
   if (verified && user) {
     req.session.user = { ...user, isLoggedIn: true };
     await req.session.save();
-    return res.send({ user: { ...user, isLoggedIn: true } });
+    return res.send({
+      user: { ...user, isLoggedIn: true },
+      message: 'Successfully logged in!',
+      error: false,
+    });
   } else {
-    return res.send({ user: null });
+    return res.send({
+      user: null,
+      message: 'Something unexpected happened',
+      error: true,
+    });
   }
 }

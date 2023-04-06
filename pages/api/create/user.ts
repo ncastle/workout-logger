@@ -3,6 +3,7 @@ import { hashPassword } from '../../../lib/password';
 import { prisma } from '../../../prisma/db';
 import { v4 as uuid } from 'uuid';
 import { withSessionRoute } from '../../../lib/withSession';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 
 export default withSessionRoute(createUser);
 
@@ -13,7 +14,11 @@ async function createUser(req: NextApiRequest, res: NextApiResponse) {
   if (!email || !password) {
     return res
       .status(500)
-      .send({ user: null, message: 'No email or password' });
+      .send({
+        user: null,
+        message: 'No email or password provided',
+        error: true,
+      });
   }
   // generate hased password
   const hashedPass = await hashPassword(password);
@@ -34,11 +39,23 @@ async function createUser(req: NextApiRequest, res: NextApiResponse) {
 
     req.session.user = { ...user, isLoggedIn: true };
     await req.session.save();
-    return res.send({ user: { ...user, isLoggedIn: true } });
+    return res.send({
+      user: { ...user, isLoggedIn: true },
+      message: `User created using email: ${email}`,
+      error: false,
+    });
   } catch (error) {
-    if (error instanceof Error) {
-      console.log(error.message);
-      return res.json({ ok: false, message: error.message });
+    if (error instanceof PrismaClientKnownRequestError) {
+      if (error.code === 'P2002') {
+        return res.json({
+          user: null,
+          message:
+            'There is already an account using that email, please login or sign up using a different email',
+          error: true,
+        });
+      } else {
+        return res.json({ user: null, message: error.message, error: true });
+      }
     }
   }
 }
