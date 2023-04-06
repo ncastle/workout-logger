@@ -57,17 +57,12 @@ function reducer(state: LoggerState, action: LoggerAction) {
   }
 }
 
-// TODO: I think I can pull some of the state and functionality out
-// of the component and create a useReducer
-function LoggerPage() {
+function Logger() {
   const [state, dispatch] = useReducer(
     reducer as Reducer<LoggerState, LoggerAction>,
     initialState
   );
 
-  // const [isEditing, setIsEditing] = useState(false);
-  // default is -1 because indexes are going to be > 0
-  // const [editIndex, setEditIndex] = useState(-1);
   const [loggerError, setLoggerError] = useState('');
 
   // fetches the exercises from the mysql database on load/refresh
@@ -183,4 +178,4 @@ function LoggerPage() {
   );
 }
 
-export default LoggerPage;
+export default Logger;

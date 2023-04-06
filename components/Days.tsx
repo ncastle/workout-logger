@@ -5,7 +5,7 @@ import { datesAreEqual } from '../utils/tools';
 import DayList from './DayList';
 import { fetchDays } from './utils';
 
-function DaysPage() {
+function Days() {
   const [days, setDays] = useState<DayItem[]>([]);
 
   // TODO: Why do I have to map the date to a new Date?
@@ -74,4 +74,4 @@ function DaysPage() {
   );
 }
 
-export default DaysPage;
+export default Days;
